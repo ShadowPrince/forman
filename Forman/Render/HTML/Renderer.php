@@ -11,6 +11,7 @@
 namespace Forman\Render\HTML;
 
 class Renderer {
+    protected static $registered_plugins = array();
     protected $elements = array();
     protected $submitterEl;
     protected $action = "";
@@ -30,9 +31,20 @@ class Renderer {
             $el = new Textarea();
         } elseif ($field instanceof \Forman\Field\ForeignKey) {
             $el = new ForeignKey();
-        }
+        } else {
+            $class = null;
+            foreach (self::$registered_plugins as $plugin_instance) {
+                if (($class = $plugin_instance->selectElementClass($field)) !== null)
+                    break;
+            }
 
+            if ($class == null)
+                throw new \Forman\Ex\HTMLRenderSelectClassException($field);
+
+            $el = new $class();
+        }
         $el->collectField($field);
+
         $this->addElement($el);
     }
 
@@ -86,5 +98,9 @@ class Renderer {
             $tpl = str_replace(sprintf("{%s}", $k), $v, $tpl);
         }
         return $tpl;
+    }
+
+    public static function registerPlugin($plugin) {
+        self::$registered_plugins = $plugin;
     }
 }

@@ -20,7 +20,7 @@
     ],
     "require": {
         "php": ">=5.2.0",
-        "shadowprince/slimext": "2.3.0"
+        "shadowprince/slimext": "*"
     },
     "autoload": {
         "psr-0": {"Forman": "."}

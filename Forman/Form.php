@@ -13,6 +13,7 @@ namespace Forman;
 class Form {
     protected $fields;
     protected $submitter;
+    protected static $addons;
 
     public function __construct() {
         $args = func_get_args();
