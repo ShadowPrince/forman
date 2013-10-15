@@ -48,12 +48,16 @@ class Renderer {
         $this->submitterEl = $el;
     }
 
+    public function renderElements() {
+        return implode(
+            "<br />\n", 
+            array_map(function ($element) {return $element->render();}, $this->getElements()));
+    }
+
     public function render() {
         return 
             $this->top() . 
-            implode(
-                "<br />\n", 
-                array_map(function ($element) {return $element->render();}, $this->getElements())) .
+            $this->renderElements() . 
             $this->bottom();
     }
 
