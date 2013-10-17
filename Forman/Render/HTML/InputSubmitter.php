@@ -4,12 +4,15 @@
  *
  * @author Vasiliy Horbachenko <shadow.prince@ya.ru>
  * @copyright 2013 Vasiliy Horbachenko
- * @version 1.0
- * @package Form
+ * @package shadowprince/forman
  *
  */
 namespace Forman\Render\HTML;
 
+/**
+ * Input submitter
+ * @TODO: move away from HTML
+ */
 class InputSubmitter implements \Forman\Render\Submitter {
     protected $name;
     protected $caption;

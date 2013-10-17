@@ -4,12 +4,14 @@
  *
  * @author Vasiliy Horbachenko <shadow.prince@ya.ru>
  * @copyright 2013 Vasiliy Horbachenko
- * @version 1.0
- * @package Form
+ * @package shadowprince/forman
  *
  */
 namespace Forman\Field;
 
+/**
+ * Main class for fields 
+ */
 class Field {
     protected $validators = array();
     protected $value;
@@ -18,6 +20,10 @@ class Field {
     protected $name;
     protected $caption;
 
+    /**
+     * Constructor.
+     * First argument must be field name, others - validators
+     */
     public function __construct() {
         $args = func_get_args();
         $this->name = array_shift($args);
@@ -26,14 +32,33 @@ class Field {
         $this->setCaption(self::getNameCaption($this->name));
     }
 
+    /**
+     * Populate field with $value
+     * @param mixed
+     * @return \Forman\Field\Field
+     */
     public function populate($value) {
         $this->value = $value;
+
+        return $this;
     }
 
+    /**
+     * Populate field from values array (populate with $data["field_name"])
+     * @param array
+     * @return \Forman\Field\Field
+     */
     public function populateFromArray($data) {
         $this->value = $data[self::normalizeName($this->getName())];
+
+        return $this;
     }
 
+    /**
+     * Validate field 
+     * @param \Slim\Application
+     * @return bool
+     */
     public function validate($app) {
         foreach ($this->validators as $validator) {
             $this->error = call_user_func($validator, $app, $this->getValue());
@@ -81,10 +106,20 @@ class Field {
         return $this->hint;
     }
 
+    /**
+     * Make caption from name (replace underscores with spaces)
+     * @param string
+     * @return string
+     */
     public static function getNameCaption($name) {
         return str_replace("_", " ", $name);
     }
 
+    /**
+     * Normalize name for HTTP. Replaces any character out of range [a-z0-9_] to underscore.
+     * @param string
+     * @return string
+     */
     public static function normalizeName($name) {
         return preg_replace("/[^a-z0-9_]+/i", "_", $name);
     }

@@ -4,13 +4,19 @@
  *
  * @author Vasiliy Horbachenko <shadow.prince@ya.ru>
  * @copyright 2013 Vasiliy Horbachenko
- * @version 1.0
- * @package Form
+ * @package shadowprince/forman
  *
  */
 namespace Forman;
 
+/**
+ * Some default validators for fields
+ */
 class Vals {
+    /**
+     * Check is field not empty
+     * @return callable
+     */
     public static function notEmpty() {
         return function ($a, $v) {
             if ($v === "" || $v === null)
@@ -18,6 +24,12 @@ class Vals {
         };
     }
 
+    /**
+     * Check is field's value length from $min to $max
+     * @param int
+     * @param int
+     * @return callable
+     */
     public static function length($min, $max) {
         return function ($a, $v) use ($min, $max) {
             if ($min != null && strlen($v) < $min)

@@ -4,13 +4,15 @@
  *
  * @author Vasiliy Horbachenko <shadow.prince@ya.ru>
  * @copyright 2013 Vasiliy Horbachenko
- * @version 1.0
- * @package Form
+ * @package shadowprince/forman
  *
  */
 namespace Forman\Render\HTML;
 
-class Renderer {
+/**
+ * HTML renderer
+ */
+class Renderer implements \Forman\Render\Renderer {
     protected static $registered_plugins = array();
     protected $elements = array();
     protected $submitterEl;
@@ -24,7 +26,11 @@ class Renderer {
         $this->submitter->process($this);
     }
 
-    public function addField($field) {
+    /**
+     * Attach field to renderer (adds element)
+     * @param \Forman\Field\Field
+     */
+    public function attachField($field) {
         if ($field instanceof \Forman\Field\Value) {
             $el = new Input();
         } elseif ($field instanceof \Forman\Field\Text) {
@@ -52,6 +58,10 @@ class Renderer {
         $this->elements[] = $element;
     }
 
+    /**
+     * Set html form action attribute
+     * @param string
+     */
     public function setAction($action) {
         $this->action = $action;
     }
@@ -60,7 +70,7 @@ class Renderer {
         $this->submitterEl = $el;
     }
 
-    public function renderElements() {
+    public function elements() {
         return implode(
             "<br />\n", 
             array_map(function ($element) {return $element->render();}, $this->getElements()));
@@ -69,10 +79,14 @@ class Renderer {
     public function render() {
         return 
             $this->top() . 
-            $this->renderElements() . 
+            $this->elements() . 
             $this->bottom();
     }
 
+    /** 
+     * Get elements array
+     * @return array
+     */
     public function getElements() {
         return array_merge($this->elements, array($this->submitterEl));
     }
@@ -83,6 +97,10 @@ class Renderer {
         ));
     }
 
+    /**
+     * Render form opening tag attributes
+     * @return string
+     */
     public function topAttributes() {
         return self::renderTemplate($this->topAttrs, array(
             "action" => $this->action,
@@ -93,6 +111,12 @@ class Renderer {
         return $this->bottom;
     }
 
+    /**
+     * Render template $tpl with $params
+     * @param string
+     * @param array
+     * @return string
+     */
     public static function renderTemplate($tpl, $params) {
         foreach ($params as $k => $v) {
             $tpl = str_replace(sprintf("{%s}", $k), $v, $tpl);
@@ -100,7 +124,11 @@ class Renderer {
         return $tpl;
     }
 
+    /**
+     * Register renderer plugin
+     * @param \Forman\Render\HTML\RendererPlugin
+     */
     public static function registerPlugin($plugin) {
-        self::$registered_plugins = $plugin;
+        self::$registered_plugins[] = $plugin;
     }
 }

@@ -4,12 +4,14 @@
  *
  * @author Vasiliy Horbachenko <shadow.prince@ya.ru>
  * @copyright 2013 Vasiliy Horbachenko
- * @version 1.0
- * @package Form
+ * @package shadowprince/forman
  *
  */
 namespace Forman\Render\HTML;
 
+/**
+ * Input for foreign key field 
+ */
 class ForeignKey extends HTMLElement {
     protected $tpl = "{caption}{renderedTag} <a href=\"{url}\">-></a>{error}";
     protected $tplTag = "<{tag} {attrs} /> ";

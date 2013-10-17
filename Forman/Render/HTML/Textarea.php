@@ -4,12 +4,14 @@
  *
  * @author Vasiliy Horbachenko <shadow.prince@ya.ru>
  * @copyright 2013 Vasiliy Horbachenko
- * @version 1.0
- * @package Form
+ * @package shadowprince/forman
  *
  */
 namespace Forman\Render\HTML;
 
+/**
+ * Textarea HTML element
+ */
 class TextArea extends HTMLElement {
     protected $tpl = "{caption}{renderedTag} {error}";
     protected $tplTag = "<{tag} {attrs}>{value}</{tag}>";

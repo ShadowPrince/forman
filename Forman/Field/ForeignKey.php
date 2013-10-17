@@ -4,12 +4,14 @@
  *
  * @author Vasiliy Horbachenko <shadow.prince@ya.ru>
  * @copyright 2013 Vasiliy Horbachenko
- * @version 1.0
- * @package Form
+ * @package shadowprince/forman
  *
  */
 namespace Forman\Field;
 
+/**
+ * Foreign key field - field with value and a url to detached object
+ */
 class ForeignKey extends Field {
     protected $link;
 
