@@ -135,11 +135,8 @@ abstract class HTMLElement implements \Forman\Render\Element {
     }
 
     public function renderAttributes() {
-        return Renderer::renderTemplate($this->tplAttrs, array(
-            "name" => $this->getName(),
-            "value" => $this->getValue(),
-            "type" => $this->getType(),
-        ));
+        return Renderer::renderTemplate($this->tplAttrs, 
+            $this->getRenderArray()
+        );
     }
-
 }
