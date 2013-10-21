@@ -15,6 +15,13 @@ namespace Forman\Render\HTML;
 class Checkbox extends HTMLElement {
     protected $tpl = "{caption}{renderedTag} {error}";
     protected $tplTag = "<{tag} {attrs} />";
-    protected $tplAttrs = "value=\"{value}\" name=\"{name}\"";
-    protected $tag = "checkbox";
+    protected $tplAttrs = "type=\"{type}\" value=\"1\" name=\"{name}\" {checked} ";
+    protected $type = "checkbox";
+    protected $tag = "input";
+
+    public function getRenderArray() {
+        return array_merge(array(
+            "checked" => (bool) $this->getValue() ? "checked" : "123",
+        ), parent::getRenderArray());
+    }
 }
