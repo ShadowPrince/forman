@@ -37,6 +37,8 @@ class Renderer implements \Forman\Render\Renderer {
             $el = new Textarea();
         } elseif ($field instanceof \Forman\Field\ForeignKey) {
             $el = new ForeignKey();
+        } elseif ($field instanceof \Forman\Field\Checkbox) {
+            $el = new Checkbox();
         } else {
             $class = null;
             foreach (self::$registered_plugins as $plugin_instance) {
