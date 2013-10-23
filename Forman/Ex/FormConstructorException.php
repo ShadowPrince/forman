@@ -9,6 +9,6 @@
  */
 namespace Forman\Ex;
 
-class FormConstructorException extends \Exception {
+class FormConstructorException extends \FormException {
 
 }

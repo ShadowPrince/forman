@@ -18,7 +18,7 @@ class Renderer implements \Forman\Render\Renderer {
     protected $submitterEl;
     protected $action = "";
     protected $top = "<form {attrs}>";
-    protected $topAttrs = "method=\"POST\" action=\"{action}\"";
+    protected $topAttrs = "method=\"{method}\" action=\"{action}\"";
     protected $bottom = "</form>";
 
     public function __construct($submitter) {
@@ -68,6 +68,14 @@ class Renderer implements \Forman\Render\Renderer {
         $this->action = $action;
     }
 
+    /**
+     * Set html form method attribute
+     * @param string
+     */
+    public function setMethod($method) {
+        $this->method = $method;
+    }
+
     public function setSubmitterEl($el) {
         $this->submitterEl = $el;
     }
@@ -106,6 +114,7 @@ class Renderer implements \Forman\Render\Renderer {
     public function topAttributes() {
         return self::renderTemplate($this->topAttrs, array(
             "action" => $this->action,
+            "method" => $this->method,
         ));
     }
 
