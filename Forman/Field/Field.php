@@ -54,7 +54,7 @@ class Field {
      * @return \Forman\Field\Field
      */
     public function populateFromArray($data) {
-        $this->value = $data[self::normalizeName($this->getName())];
+        $this->populate($data[self::normalizeName($this->getName())]);
 
         return $this;
     }
