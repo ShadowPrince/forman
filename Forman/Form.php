@@ -79,7 +79,7 @@ class Form {
         $fields = $this->fields;
 
         foreach (self::getPlugins() as $plg)
-            $data = $plg->processFields($form, $fields);
+            $fields = $plg->processFields($form, $fields);
 
         return $fields;
     }
