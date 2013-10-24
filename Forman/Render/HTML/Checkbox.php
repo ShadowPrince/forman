@@ -21,7 +21,7 @@ class Checkbox extends HTMLElement {
 
     public function getRenderArray() {
         return array_merge(array(
-            "checked" => (bool) $this->getValue() ? "checked" : "123",
+            "checked" => (bool) $this->getValue() ? "checked" : "",
         ), parent::getRenderArray());
     }
 }
