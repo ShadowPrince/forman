@@ -14,19 +14,19 @@ namespace Forman;
  */
 class Form {
     protected $fields;
-    protected $submitter;
-    protected static $addons;
+    protected static $registered_plugins = array();
 
     /**
-     * First argument must be form submitter, next goes all of \Forman\Field\Field
+     * Arguments of \Forman\Field\Field
      */
     public function __construct() {
         $args = func_get_args();
-        $this->submitter = array_shift($args);
-        if (!($this->submitter instanceof \Forman\Render\Submitter)) {
-            throw new \Forman\Ex\FormConstructorException("First argument must be instance of \Forman\Render\Submitter!");
-        }
         $this->fields = $args;
+
+        foreach ($args as $field) {
+            if (!($field instanceof \Forman\Field\Field))
+                throw new \Forman\Ex\InvalidFieldException($field);
+        }
     }
 
     /**
@@ -46,7 +46,7 @@ class Form {
      * @return \Forman\Form
      */
     public function populate($data) {
-        foreach ($this->fields as $field) {
+        foreach ($this->getFields() as $field) {
             $field->populateFromArray($data);
         }
 
@@ -55,17 +55,33 @@ class Form {
 
     /**
      * Validate form fields (after populating it)
-     * @param \Slim\Application
      * @return bool
      */
-    public function validate($app) {
+    public function validate() {
         $result = true;
-        foreach ($this->fields as $field) {
-            if (!$field->validate($app))
+        foreach ($this->getFields() as $field) {
+            if (!call_user_func_array(array($field, "validate"), func_get_args())) {
                 $result = false;
+            }
+        }
+        foreach (self::getPlugins() as $plg) {
+            $result = $plg->validate($this, $result);
         }
 
         return $result;
+    }
+
+    /**
+     * Get all fields
+     * @return array
+     */
+    public function getFields() {
+        $fields = $this->fields;
+
+        foreach (self::getPlugins() as $plg)
+            $data = $plg->processFields($form, $fields);
+
+        return $fields;
     }
 
     /**
@@ -74,9 +90,12 @@ class Form {
      */
     public function getErrors() {
         $data = array();
-        foreach ($this->fields as $field) {
+        foreach ($this->getFields() as $field) {
             $data[$field->getName()] = $field->getError();
         }
+
+        foreach (self::getPlugins() as $plg)
+            $data = $plg->processErrors($form, $data);
 
         return $data;
     }
@@ -87,26 +106,37 @@ class Form {
      */
     public function getData() {
         $data = array();
-        foreach ($this->fields as $field) {
+        foreach ($this->getFields() as $field) {
             $data[$field->getName()] = $field->getValue();
         }
+
+        foreach (self::getPlugins() as $plg)
+            $data = $plg->processData($form, $data);
 
         return $data;
     }
 
     /**
-     * Process form - populate it with $data, validate with $app, return data if valid or false
-     * @param \Slim\Application
-     * @param array
+     * Process form - populate it with data (fist argument), validate with additional arguments (all after data array),
+     * return data if valid or false if not.
      * @return mixed
      */
-    public function process($app, $data) {
-        if (!$this->submitter->isSubmitted($data))
+    public function process() {
+        $args = func_get_args();
+        $data = array_shift($args);
+
+        if (!empty(
+            array_filter(
+                $this->getFields(), 
+                function ($field) use ($data) {
+                    return !array_key_exists($field->getNormalizedName(), $data); 
+                })
+            )) 
             return false;
 
         $this->populate($data);
 
-        if ($this->validate($app))
+        if (call_user_func_array(array($this, "validate"), $args))
             return $this->getData();
         else
             return false;
@@ -118,12 +148,28 @@ class Form {
      * @return \Forman\Render\Renderer
      */
     public function getRenderer($renderer_class) {
-        $renderer = new $renderer_class($this->submitter);
+        $renderer = new $renderer_class();
 
-        foreach ($this->fields as $field) {
+        foreach ($this->getFields() as $field) {
             $renderer->attachField($field);
         }
 
         return $renderer;
+    }
+
+    /**
+     * Get registered plugins
+     * @return array
+     */
+    public static function getPlugins() {
+        return self::$registered_plugins;
+    }
+
+    /**
+     * Register plugin
+     * @param \Forman\Plugin
+     */
+    public static function registerPlugin($plugin_instance) {
+        return self::$registered_plugins[] = $plugin_instance;
     }
 }

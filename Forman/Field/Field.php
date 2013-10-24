@@ -28,6 +28,11 @@ class Field {
         $args = func_get_args();
         $this->name = array_shift($args);
         $this->validators = $args;
+        foreach ($args as $val) {
+            if (!is_callable($val)) {
+                throw new \Forman\Ex\InvalidFieldValidatorException($val);
+            }
+        }
 
         $this->setCaption(self::getNameCaption($this->name));
     }
@@ -56,12 +61,14 @@ class Field {
 
     /**
      * Validate field 
-     * @param \Slim\Application
      * @return bool
      */
-    public function validate($app) {
+    public function validate() {
         foreach ($this->validators as $validator) {
-            $this->error = call_user_func($validator, $app, $this->getValue());
+            $this->error = call_user_func_array(
+                $validator, 
+                array_merge(array($this->getValue()), func_get_args())
+            );
             if (!empty($this->error))
                 return false;
         }
@@ -70,6 +77,10 @@ class Field {
 
     public function getError() {
         return $this->error;
+    }
+
+    public function getNormalizedName() {
+        return self::normalizeName($this->getName());
     }
 
     public function getName() {

@@ -9,16 +9,21 @@
  */
 namespace Forman\Render\HTML;
 
+/**
+ * HTMLElement
+ */
 abstract class HTMLElement implements \Forman\Render\Element {
     protected $tpl = "{caption}{renderedTag} {error}";
     protected $tplTag = "<{tag} {attrs} />";
     protected $tplAttrs = "type=\"{type}\" value=\"{value}\" name=\"{name}\"";
+
     protected $type = "text";
     protected $tag = "input";
 
-    protected $name = null;
-    protected $value = null;
+    protected $name;
+    protected $value;
     protected $hint;
+
     protected $active = true;
     protected $caption = "";
     protected $error = "";
@@ -104,6 +109,20 @@ abstract class HTMLElement implements \Forman\Render\Element {
         return $this;
     }
 
+    public function render() {
+        return Renderer::renderTemplate($this->tpl, array_merge(
+            array(
+                "renderedTag" => $this->renderTag(),
+                "attrs" => $this->renderAttributes()
+            ),
+            $this->getRenderArray()
+        ));
+    }
+
+    /**
+     * Get render parameters array
+     * @return array
+     */
     public function getRenderArray() {
         return array(
             "error" => $this->getError(),
@@ -115,16 +134,10 @@ abstract class HTMLElement implements \Forman\Render\Element {
         );
     }
 
-    public function render() {
-        return Renderer::renderTemplate($this->tpl, array_merge(
-            array(
-                "renderedTag" => $this->renderTag(),
-                "attrs" => $this->renderAttributes()
-            ),
-            $this->getRenderArray()
-        ));
-    }
-
+    /*
+     * Render only tag
+     * @return string
+     */
     public function renderTag() {
         return Renderer::renderTemplate($this->tplTag, array_merge(
             array(
@@ -134,6 +147,10 @@ abstract class HTMLElement implements \Forman\Render\Element {
         ));
     }
 
+    /**
+     * Render only attributes
+     * @return string
+     */
     public function renderAttributes() {
         return Renderer::renderTemplate($this->tplAttrs, 
             $this->getRenderArray()

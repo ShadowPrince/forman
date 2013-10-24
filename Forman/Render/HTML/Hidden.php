@@ -10,16 +10,13 @@
 namespace Forman\Render\HTML;
 
 /**
- * Input submitter
+ * Input hidden html element
  */
-class InputSubmitter extends HTMLElement {
-    protected $type="submit";
-
-    public function getValue() {
-        return _("Submit");
-    }
+class Hidden extends HTMLElement {
+    protected $type = "hidden";
 
     public function getCaption() {
         return "";
     }
 }
+

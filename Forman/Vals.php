@@ -18,7 +18,7 @@ class Vals {
      * @return callable
      */
     public static function notEmpty() {
-        return function ($a, $v) {
+        return function ($v) {
             if ($v === "" || $v === null)
                 return _("Field should not be empty!");
         };
@@ -31,7 +31,7 @@ class Vals {
      * @return callable
      */
     public static function length($min, $max) {
-        return function ($a, $v) use ($min, $max) {
+        return function ($v, $a) use ($min, $max) {
             if ($min != null && strlen($v) < $min)
                 return sprintf(_("Minimum length - %d symbols!"), $min);
             if ($max != null && strlen($v) > $max)
