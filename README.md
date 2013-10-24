@@ -1,42 +1,52 @@
 ## Forman 
 Forman is library for working with forms.
 #### in code
-    $form = new \Forman\Form(
-        new \Forman\Renderer\HTML\InputSubmitter("/email"),
-        new \Forman\Field\Value("email"),
-        new \Forman\Field\Text("text")
-    );
+```php
+$form = new \Forman\Form(
+    new \Forman\Field\Value("email"),
+    new \Forman\Field\Text("text"),
+    (new \Forman\Field\Checkbox("subscr"))->setValue(1)
+);
 
-    if ($data = $form->process($app, $app->request()->post())) {
-        // send email
-    }
+if ($data = $form->process($_POST)) {
+    // send email
+}
 
-    $app->render("email_me", array(
-        "form" => $form->getRenderer("\Forman\Render\HTML\Renderer"),
-    ));
+render_template("contact.html", array(
+    "form" => $form->getRenderer("\Forman\Render\HTML\Renderer")
+        ->setAction("/contact")
+        ->GET(),
+));
+```
 
 ### in template
-    {{ form.render|raw }}
+```twig
+{{ form.render|raw }}
+```
 ### or
-    {{ form.top|raw }}
-    That's my form
-    {{ form.elements|raw }}
-    {{ form.bottom|raw }}
+```twig
+{{ form.top|raw }}
+That's my form
+{{ form.elements|raw }}
+{{ form.bottom|raw }}
+```
 ### or even
-    <form action="{{ form.getAction }}" method="POST">
-        {% for field in form.getFields %}
-            {% if field.getCaption %}
-                <label class="caption">{{ field.getCaption }}</label>
-            {% endif %}
-            <span class="field">
-                {{ field.renderTag|raw }}
+```twig
+<form action="{{ form.getAction }}" method="POST">
+    {% for field in form.getFields %}
+        {% if field.getCaption %}
+            <label class="caption">{{ field.getCaption }}</label>
+        {% endif %}
+        <span class="field">
+            {{ field.renderTag|raw }}
+        </span>
+        {% if field.getHint %}
+            <span class="hint">
+                {{ field.getHint }}
             </span>
-            {% if field.getHint %}
-                <span class="hint">
-                    {{ field.getHint }}
-                </span>
-            {% endif %}
-        {% endfor %}
-    </form>
+        {% endif %}
+    {% endfor %}
+</form>
+```
 
-Forman writed for [slimext](http://github.com/shadowprince/slimext), but not attached to it, you can use it with any framework, param `$app` in form's `validate()' and `process()` just passed to validators (for validators like value-not-exists-in-database).
+Forman writed for [slimext](http://github.com/shadowprince/slimext), but not attached to it, you can use it with any framework or without it. Additional parameters to `process` passed to form validators (you can provide orm object or application instance).

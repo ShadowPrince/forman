@@ -95,7 +95,7 @@ class Renderer implements \Forman\Render\Renderer {
      * Set method to GET
      * @return \Forman\Render\HTML\Renderer
      */
-    public function get() {
+    public function GET() {
         return $this->setMethod("GET");
     }
 
