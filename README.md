@@ -20,18 +20,18 @@ render_template("contact.html", array(
 ```
 
 ### in template
-```twig
+```html
 {{ form.render|raw }}
 ```
 ### or
-```twig
+```html
 {{ form.top|raw }}
 That's my form
 {{ form.elements|raw }}
 {{ form.bottom|raw }}
 ```
 ### or even
-```twig
+```html
 <form action="{{ form.getAction }}" method="POST">
     {% for field in form.getFields %}
         {% if field.getCaption %}
