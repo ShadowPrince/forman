@@ -131,6 +131,8 @@ class Renderer implements \Forman\Render\Renderer {
                 $el = new Checkbox();
             elseif ($field instanceof \Forman\Field\Hidden)
                 $el = new Hidden();
+            elseif ($field instanceof \Forman\Field\Password)
+                $el = new Password();
             else
                 throw new \Forman\Ex\HTMLRenderSelectClassException($field);
         } else 
