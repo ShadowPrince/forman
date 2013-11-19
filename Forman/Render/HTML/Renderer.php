@@ -39,6 +39,8 @@ class Renderer implements \Forman\Render\Renderer {
             $el = new ForeignKey();
         } elseif ($field instanceof \Forman\Field\Checkbox) {
             $el = new Checkbox();
+        } elseif ($field instanceof \Forman\Field\Password) {
+            $el = new Password();
         } else {
             $class = null;
             foreach (self::$registered_plugins as $plugin_instance) {
